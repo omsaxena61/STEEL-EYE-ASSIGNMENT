@@ -1,0 +1,59 @@
+ANSWER1-
+Prefer creating a separate component for the list and the list items.If we merge the code of both into a single component that will decrease the readibility of the code
+.Hence we should ensure that every component has its own purpose and role.Here the ListComponent will be the parent component and the ListItemComponent will be the child components.
+
+ANSWER2-
+Warning -  React Hook useEffect has a missing dependency: 'setSelectedIndex'. Either include it or remove the dependency array  Here the useEffect considered setSelectedIndex as a variable but actually its a state setter function
+const [setSelectedIndex, selectedIndex] = useState(); hence we need to interchange the state and the state setter function.Always the state variable is put at the 1st position
+and setter function is put at 2nd position.Also assign a default initial state value inside useStateCorrect one  -  const [selectedIndex,setSelectedIndex ] = useState(0); Also ensure to assign a initial default value to it.
+ 
+ ANSWER3-
+ AFTER THE  MODFYING OPTIMYZING
+ import React, { useState, useEffect, memo } from 'react';
+import PropTypes from 'prop-types';
+import SingleListItem from './SingleListItem';
+
+
+
+// List Component
+const WrappedListComponent = ({
+  items,
+}) => {
+  //const [setSelectedIndex, selectedIndex] = useState();   //here we need to interchange the state and the state setter function.Always the state variable is put at the 1st position
+  ///and setter function is put at 2nd position.Also assign a default initial state value inside useState
+  const [selectedIndex,setSelectedIndex ] = useState(0);
+  useEffect(() => {
+    setSelectedIndex(null);
+  }, [items]);
+
+  const handleClick = index => {
+    setSelectedIndex(index);
+  };
+
+  return (
+    <ul style={{ textAlign: 'left' }}>
+      {items.map((item, index) => (
+        <SingleListItem
+          onClickHandler={() => handleClick(index)}
+          text={item.text}
+          index={index}
+          isSelected={selectedIndex}
+        />
+      ))}
+    </ul>
+  )
+};
+
+WrappedListComponent.propTypes = {
+  items: PropTypes.array(PropTypes.shape({
+    text: PropTypes.string.isRequired,
+  })),
+};
+
+WrappedListComponent.defaultProps = {
+  items: [],  //replaced null with []
+};
+
+const App = memo(WrappedListComponent);
+
+export default App;
